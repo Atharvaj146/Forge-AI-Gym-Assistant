@@ -1,0 +1,175 @@
+﻿[0] [Title] FORGE
+[1] [Normal] Website Implementation Manual
+[2] [Normal] Detailed build spec derived from the Product Explainer Doc + rough site manual, for a 2-person team building in Google Antigravity
+[3] [Normal] Version 1.0  |  Scope: MVP (Phase 1)  |  26 July 2026
+[5] [Heading 1] 0. Purpose & How To Use This Manual
+[6] [Normal] This document translates the FORGE Product Explainer (the "what and why") into the FORGE Website Manual (the "what to build, screen by screen"). It is written to be handed directly to Antigravity as a set of task briefs ΓÇö each page section below is self-contained enough to become one agent task/mission.
+[7] [List Paragraph] Section 1ΓÇô3: read once, sets shared decisions (scope, stack, IA) both builders must agree on before coding.
+[8] [List Paragraph] Section 4ΓÇô6: the actual page-by-page spec ΓÇö the bulk of the build.
+[9] [List Paragraph] Section 7ΓÇô10: data model, APIs, AI components, non-functional rules ΓÇö shared contracts between frontend and backend.
+[10] [List Paragraph] Section 11ΓÇô13: how to split work across 2 people, week-by-week plan, and how to brief Antigravity agents.
+[11] [List Paragraph] Section 14ΓÇô15: assumptions to confirm, and explicit out-of-scope items so nobody over-builds.
+[12] [Heading 1] 1. Scope Decision ΓÇö What We Are Building Now
+[13] [Normal] The original manual only sketched Home / Workout / Nutrition / AI CAM / Progress. The Product Explainer defines three phases. To avoid scope creep with a 2-person team, this manual locks scope to MVP (Phase 1) for the website, with Phase 2 items explicitly stubbed (UI present, feature disabled) where the rough manual already implies them (AI CAM).
+[14] [Normal] Note: the rough manual explicitly asks for an AI CAM page pre-login with ΓÇ£basic instructions + small demo (before login)ΓÇ¥ and a ΓÇ£try AI CAMΓÇ¥ CTA that redirects to login. That page shell is in scope now; the actual MediaPipe pose-tracking engine is Phase 2 work per the explainer. Confirm this trade-off with whoever owns the roadmap before starting (see Section 14).
+[15] [Heading 1] 2. Recommended Tech Stack
+[16] [Normal] The explainer states architecture is an engineering decision, not a mandated stack. Given a 2-person team building inside Google Antigravity (agent-first IDE, browser-in-the-loop verification), the stack below optimizes for: fast agent-driven scaffolding, one shared language across frontend/backend, and low ops overhead.
+[17] [Normal] Antigravity works across editor, terminal, and browser and verifies its own work with screenshots/artifacts ΓÇö so prefer stacks with clear visual output (React) and a runnable local dev server (Vite + Express) that the agent can browser-test after each task.
+[18] [Heading 1] 3. Global Rules That Apply To Every Page
+[19] [List Paragraph] Two states per page: Pre-Login (marketing/teaser, always ends in a CTA to Login/Signup) and Post-Login (functional, personalized). Build both from day one ΓÇö don't bolt post-login on later.
+[20] [List Paragraph] Mobile-first responsive: design at 375px width first, then scale up to tablet (768px) and desktop (1280px+). Explainer states MVP is web-only, mobile-first.
+[21] [List Paragraph] Global navbar: Home ΓÇö Workout ΓÇö Nutrition ΓÇö AI CAM ΓÇö Progress (post-login only) ΓÇö Login/Signup (pre-login) or Profile avatar + Logout (post-login).
+[22] [List Paragraph] Global footer: About, Contact, Pricing, Terms, Privacy, Social links.
+[23] [List Paragraph] Global AI Chatbot: a floating action button (bottom-right) on every post-login page, opening a chat panel. Not available pre-login except as a teaser tooltip.
+[24] [List Paragraph] Every feature that requires personalization (personalised workout, personalised recipes, AI CAM, progress) is gated behind auth. Clicking it while logged out redirects to /login with a "continue to X after signup" return path preserved.
+[25] [List Paragraph] Subscription gating: some post-login features are further gated by tier (Basic/Intermediate/Hardcore) ΓÇö see Section 10.
+[26] [Heading 1] 4. Information Architecture / Sitemap
+[27] [Heading 1] 5. Page Specifications ΓÇö Pre-Login
+[28] [Heading 2] 5.1 Home Page
+[29] [Normal] Per the rough manual: Hero section ΓåÆ ΓÇ£For GymΓÇ¥ section ΓåÆ Footer. This is the top-of-funnel marketing page; keep it lightweight (no data calls).
+[30] [Heading 3] Sections, top to bottom
+[31] [List Paragraph] Sticky navbar: Home / Workout / Nutrition / AI CAM ΓÇö with Login and Sign Up buttons.
+[32] [List Paragraph] Hero: Product name, tagline ΓÇ£Train Smarter. Lift Better. Become Stronger.ΓÇ¥, one-line value prop, primary CTA ΓÇ£Get StartedΓÇ¥ ΓåÆ /signup, secondary CTA ΓÇ£See how it worksΓÇ¥ ΓåÆ scrolls to features.
+[33] [List Paragraph] Problem ΓåÆ Solution strip: 3ΓÇô4 cards drawn from Section 2 of the explainer (bad form/injury, generic programs, no feedback, cost) each paired with the FORGE feature that solves it.
+[34] [List Paragraph] Feature highlights (4 cards): AI Workout Generator, Diet Tracker, BMI + Progress Tracking, AI Chatbot ΓÇö each links to its page.
+[35] [List Paragraph] ΓÇ£For GymΓÇ¥ section (named explicitly in rough manual): positions FORGE for gyms/studios/corporate wellness (roadmap item), short teaser block with a ΓÇ£Partner with usΓÇ¥ contact CTA ΓÇö informational only, no functional B2B flow in v1.
+[36] [List Paragraph] Comparison strip (optional, from explainer Section 7): FORGE vs generic apps table ΓÇö Personalized AI Plans / Real-time form correction / Nutrition guidance / Adaptive coaching, all Γ£ô for FORGE.
+[37] [List Paragraph] Pricing teaser: 3 tier cards (Basic/Intermediate/Hardcore) with ΓÇ£View plansΓÇ¥ ΓåÆ /pricing.
+[38] [List Paragraph] Footer: standard links + newsletter signup (optional).
+[39] [Heading 2] 5.2 Workout Page (pre-login)
+[40] [Normal] Per rough manual: list of workouts grouped by muscle group (Chest, Back, Biceps, etc.), each exercise entry shown with a simulation on the side.
+[41] [List Paragraph] Muscle-group tabs or accordions: Chest, Back, Biceps, Shoulders, Legs, Core, Full Body (extend the manual's 3 examples to a full standard set).
+[42] [List Paragraph] Each exercise row: name, thumbnail/simulation (humanoid or stickman animation ΓÇö use a lightweight looping GIF/Lottie/sprite per exercise, not live video, for v1), short description, target muscle tag.
+[43] [List Paragraph] Sticky/anchored CTA card: ΓÇ£Get a workout plan personalised to youΓÇ¥ (explicitly the USP per rough manual) ΓåÆ redirects to /signup (or /login if account exists) with return-to=/workout?personalised=1.
+[44] [List Paragraph] No logging, no plan generation, no save actions on this pre-login view ΓÇö read-only exercise library.
+[45] [Heading 2] 5.3 Nutrition Page (pre-login)
+[46] [List Paragraph] Educational content: macro/micronutrient facts, why nutrition matters for the user's goal.
+[47] [List Paragraph] General recipe library (not personalised): recipe cards with name, diet tag (veg/non-veg/vegan/etc.), approx calories.
+[48] [List Paragraph] CTA: ΓÇ£Get personalised recipes & meal planΓÇ¥ ΓåÆ /signup or /login, return-to=/nutrition?personalised=1.
+[49] [Heading 2] 5.4 AI CAM Page (pre-login)
+[50] [Normal] This is the flagship feature ΓÇö per explainer Section 4.2.1, treat the copy here carefully since it is Phase 2 under the hood but needs a Phase-1-quality landing experience.
+[51] [List Paragraph] Explainer block: what AI CAM is, how it works (camera ΓåÆ pose estimation ΓåÆ movement analysis ΓåÆ rep counting), in plain language ΓÇö reuse the four ΓÇ£How it worksΓÇ¥ bullets from the explainer.
+[52] [List Paragraph] What it checks: joint alignment, range of motion, spinal position, tempo, symmetry ΓÇö shown as an icon grid.
+[53] [List Paragraph] Small demo: a pre-recorded looping clip or animated skeletal overlay illustrating a squat being tracked, with example correction cues (ΓÇ£keep your knees in line with your toesΓÇ¥). This is a canned demo asset, not a live camera feed, for v1.
+[54] [List Paragraph] ΓÇ£Try AI CAMΓÇ¥ CTA ΓåÆ redirects to /login (per rough manual) with return-to=/ai-cam.
+[55] [List Paragraph] Disclaimer line: coaching feedback only, not a medical assessment (reuse explainer's guardrail copy).
+[56] [Heading 2] 5.5 Progress Page (pre-login)
+[57] [List Paragraph] Explainer block: what Progress tracks once logged in ΓÇö routines, meals, BMI, progress chart, streaks (per rough manual).
+[58] [List Paragraph] Sample/blurred chart mockup to visualize the value, not real data.
+[59] [List Paragraph] CTA ΓåÆ /login or /signup.
+[60] [Heading 1] 6. Page Specifications ΓÇö Post-Login
+[61] [Normal] After login, the site's default landing view is the Dashboard (per explainer Step 3), not the Home page. Home / Workout / Nutrition / AI CAM / Progress remain reachable from the navbar but render their functional variants.
+[62] [Heading 2] 6.1 Onboarding (first login only)
+[63] [Normal] Runs once, immediately after signup, before the Dashboard is ever shown. Explainer requires: under 5 minutes, all required fields validated before a plan is generated, profile stays editable afterward.
+[64] [List Paragraph] Step 1 ΓÇö Goal: weight loss / muscle gain / endurance / general fitness (single select).
+[65] [List Paragraph] Step 2 ΓÇö Experience level: Beginner / Intermediate / Advanced.
+[66] [List Paragraph] Step 3 ΓÇö Body metrics: height, weight, age, sex (for BMI + plan calibration).
+[67] [List Paragraph] Step 4 ΓÇö Dietary preference: vegetarian / non-vegetarian / vegan / lactose-free / Jain / diabetic-friendly.
+[68] [List Paragraph] Step 5 ΓÇö Location & equipment: home or gym; if home, checklist of available equipment (bodyweight only, dumbbells, resistance bands, full set, etc.).
+[69] [List Paragraph] Progress indicator (step X of 5), Back/Next, final ΓÇ£Generate my planΓÇ¥ button that triggers the AI Workout Generator (Section 9.1) and routes to /dashboard.
+[70] [List Paragraph] Validation: block ΓÇ£NextΓÇ¥ until the current step's required fields are filled; do not allow skipping straight to Dashboard without completing all 5 steps.
+[71] [Heading 2] 6.2 Dashboard (default post-login landing page)
+[72] [List Paragraph] Today's plan card: session type for today (yoga/HIIT/cardio/gym/mobility per Daily Planner) with a ΓÇ£StartΓÇ¥ button.
+[73] [List Paragraph] Quick stats row: current BMI (with classification), current streak, this week's sessions completed vs planned.
+[74] [List Paragraph] Quick-log actions: ΓÇ£Log a mealΓÇ¥, ΓÇ£Log a workoutΓÇ¥, ΓÇ£Update weightΓÇ¥ ΓÇö each opens a lightweight modal, no full page nav.
+[75] [List Paragraph] Mini progress chart preview ΓåÆ ΓÇ£View full progressΓÇ¥ links to /progress.
+[76] [List Paragraph] Reminders/notifications strip for today's scheduled session (Daily Planner requirement).
+[77] [Heading 2] 6.3 Workout Page (post-login)
+[78] [List Paragraph] Tab/toggle at top: ΓÇ£My PlanΓÇ¥ (default) vs ΓÇ£Exercise LibraryΓÇ¥ (the same browsable list as pre-login, still available).
+[79] [List Paragraph] My Plan view: current week's plan grouped by day, each day shows session type + exercise list (sets/reps/rest).
+[80] [List Paragraph] Per-exercise controls: swap exercise (pick a same-muscle-group alternative), mark complete, log sets/reps/weight actually performed.
+[81] [List Paragraph] ΓÇ£Regenerate weekΓÇ¥ action (re-invokes the AI generator with current profile).
+[82] [List Paragraph] Difficulty progression indicator: shows plan has advanced in difficulty as sessions are logged (explainer requirement).
+[83] [List Paragraph] ΓÇ£Use in AI CAMΓÇ¥ button on each exercise ΓÇö links to /ai-cam with that exercise pre-selected (explainer: ΓÇ£whenever a workout plan is suggested, it can be seen in AI CAMΓÇ¥). In v1 this opens the AI CAM shell in stub mode.
+[84] [Heading 2] 6.4 Nutrition Page (post-login)
+[85] [List Paragraph] Daily/weekly meal plan filtered by the user's dietary preference and calorie target derived from goal + metrics.
+[86] [List Paragraph] Meal logging: search/select a food or recipe, portion, auto-computed calories; log against breakfast/lunch/dinner/snacks.
+[87] [List Paragraph] Restricted-food substitution: if a logged item conflicts with dietary preference (e.g., paneer logged by a vegan-tagged user is fine, but a non-veg item logged by a vegetarian-tagged user), surface an automatic substitute suggestion inline.
+[88] [List Paragraph] Daily calorie/macro summary bar (consumed vs target).
+[89] [Heading 2] 6.5 AI CAM Page (post-login)
+[90] [Normal] Build the full shell and UX now; wire the actual MediaPipe pose-estimation logic as a flagged Phase 2 module so the page doesn't need to be rebuilt later.
+[91] [List Paragraph] Exercise selector (pre-filled if arrived via ΓÇ£Use in AI CAMΓÇ¥ from Workout page).
+[92] [List Paragraph] Camera permission prompt + on-screen framing/setup guidance (per explainer guardrails) before ΓÇ£Start SessionΓÇ¥ is enabled.
+[93] [List Paragraph] Live view container: camera feed + skeletal overlay area (Phase 2 logic) with a placeholder ΓÇ£Coming soonΓÇ¥ state and rep counter UI already laid out.
+[94] [List Paragraph] Post-set/session summary screen scaffold: form score, what-went-well vs needs-work ΓÇö static/demo data in v1, wired to real analysis in Phase 2.
+[95] [List Paragraph] Medical-advice disclaimer footer, consistent with the chatbot's disclaimer.
+[96] [Heading 2] 6.6 Progress Page (post-login)
+[97] [List Paragraph] BMI trend chart (recalculates automatically whenever weight is updated).
+[98] [List Paragraph] Weight trend chart.
+[99] [List Paragraph] Workout volume / session-frequency chart.
+[100] [List Paragraph] Streak display.
+[101] [List Paragraph] Filterable history log: past workouts (by date range, muscle group, session type) and past meals.
+[102] [List Paragraph] (If AI CAM is later wired) form-quality trend alongside weight/volume, per explainer.
+[103] [Heading 2] 6.7 Profile
+[104] [List Paragraph] Editable fields: name, email, height, weight (triggers BMI + progress recompute), age, sex, goal, experience level, dietary preference, equipment, location.
+[105] [List Paragraph] Subscription section: current tier, renewal date, ΓÇ£Manage subscriptionΓÇ¥ ΓåÆ /pricing.
+[106] [List Paragraph] Logout.
+[107] [Heading 2] 6.8 Pricing / Subscription & Billing
+[108] [List Paragraph] Tier comparison table (Basic / Intermediate / Hardcore) ΓÇö see Section 10 for exact pricing and gating.
+[109] [List Paragraph] Individual vs Organization toggle (org shows seat-based pricing + an admin seat-management screen: add/remove users up to purchased limit).
+[110] [List Paragraph] Checkout flow via Razorpay: card and UPI.
+[111] [List Paragraph] Post-payment: subscription status updates immediately and gates unlock without requiring re-login.
+[112] [Heading 2] 6.9 AI Chatbot (global widget, post-login)
+[113] [List Paragraph] Floating button on every authenticated page; opens a side/bottom chat panel.
+[114] [List Paragraph] Scoped strictly to fitness, nutrition, and app-usage questions; has read access to the user's profile and current plan for contextual answers.
+[115] [List Paragraph] Persistent, visible disclaimer: ΓÇ£FORGE's AI Coach does not provide medical advice.ΓÇ¥ shown at the top of every chat session.
+[116] [List Paragraph] Chat history persisted per user (simple table, no need for advanced RAG in v1).
+[117] [Heading 1] 7. Data Model (v1)
+[118] [Normal] Minimum schema to support every page above. Build in Prisma; adjust field types as needed but keep these entities and relationships.
+[119] [Heading 1] 8. API Endpoints (v1 REST surface)
+[120] [Heading 1] 9. AI Components ΓÇö What Actually Needs ΓÇ£AIΓÇ¥ in v1
+[121] [Heading 2] 9.1 AI Workout Generator
+[122] [List Paragraph] Input to the LLM/rules engine: goal, experience level, location, equipment, and (after week 1) recent WorkoutLog completion rate.
+[123] [List Paragraph] Output: a structured JSON weekly plan (day ΓåÆ session_type ΓåÆ list of exercises with sets/reps) that maps directly onto WorkoutPlan/WorkoutPlanDay/WorkoutPlanExercise.
+[124] [List Paragraph] Regeneration and single-exercise swap both call the same generator with a narrower scope (one day, or one exercise + ΓÇ£exclude XΓÇ¥).
+[125] [List Paragraph] Progression rule: on each regeneration, difficulty step-up is driven by completion rate stored in WorkoutLog, not by the LLM guessing ΓÇö keep this a deterministic rule server-side, with the LLM only picking exercises/sets/reps within that difficulty band.
+[126] [Heading 2] 9.2 Diet/Nutrition Filtering
+[127] [List Paragraph] Mostly deterministic (v1 does not need an LLM here): filter Recipe by diet_tags matching the user's dietary_preference, and by a calorie target computed from goal + BMI/weight.
+[128] [List Paragraph] Substitute suggestion: a lookup table mapping restricted ingredients ΓåÆ approved alternatives per diet type, checked at meal-log time.
+[129] [Heading 2] 9.3 AI Chatbot
+[130] [List Paragraph] System prompt fixed server-side: scope strictly to fitness/nutrition/app-usage, always include the no-medical-advice disclaimer, and inject the user's Profile + current WorkoutPlan/Nutrition summary as context on every call.
+[131] [List Paragraph] No memory beyond ChatMessage history for that user; no external tool use required in v1.
+[132] [Heading 2] 9.4 AI CAM (Phase 2 ΓÇö do not build the engine in v1)
+[133] [List Paragraph] When it is built: MediaPipe Pose runs client-side in the browser (or a companion mobile capture), extracting joint coordinates; a rules layer compares joint angles per exercise against threshold ranges (e.g., knee valgus angle for squats) to flag form breaks and count reps.
+[134] [List Paragraph] v1 only needs the AiCamSession table and page shell so this can be dropped in later without a schema change.
+[135] [Heading 1] 10. Subscription Tiers & Access Gating
+[136] [Normal] Exact feature-to-tier mapping above is a proposal, not fixed in either source doc ΓÇö confirm the real split before wiring PATCH gates (flag in Section 14). Regardless of the split chosen, implement gating as a single server-side check (subscription.tier >= feature.min_tier) reused everywhere, not per-page logic.
+[137] [Heading 1] 11. Non-Functional Requirements
+[138] [List Paragraph] Security: hash passwords (bcrypt), httpOnly + secure cookies for tokens, rate-limit /auth endpoints, validate all onboarding/profile input server-side (never trust client-side validation alone).
+[139] [List Paragraph] Privacy/consent: explicit camera-permission prompt with a clear explanation before AI CAM activates (even in stub form).
+[140] [List Paragraph] Performance: plan generation and dashboard load should each resolve in under 2ΓÇô3 seconds; explainer's success metric is sign-up-to-first-plan under 5 minutes end-to-end, so onboarding + generation latency matters.
+[141] [List Paragraph] Responsiveness: every page usable at 375px width without horizontal scroll; test in Antigravity's browser-in-the-loop verification at both mobile and desktop breakpoints.
+[142] [List Paragraph] Accessibility: form inputs labelled, color contrast checked, charts have a text/tabular fallback.
+[143] [List Paragraph] No medical claims anywhere in copy ΓÇö chatbot, AI CAM, and nutrition pages all carry the same disclaimer language.
+[144] [Heading 1] 12. Success Metrics To Instrument From Day One
+[145] [List Paragraph] Time from signup submit to first generated plan shown (target: under 5 minutes) ΓÇö log timestamps at signup, onboarding-complete, and plan-generated.
+[146] [List Paragraph] Weekly active usage ΓÇö log a lightweight ΓÇ£last_active_atΓÇ¥ on User, or a session/event table if time allows.
+[147] [List Paragraph] Week-4 retention and free-to-paid conversion ΓÇö both computable later from Subscription + login-event timestamps if those are captured now; don't skip logging even if the dashboard for it comes later.
+[148] [Heading 1] 13. Implementation Plan ΓÇö 2-Person Team
+[149] [Heading 2] 13.1 Suggested split
+[150] [Normal] Both agree on the API contract (Section 8) and data model (Section 7) up front so each can work against a mock/stub of the other's layer without blocking.
+[151] [Heading 2] 13.2 Suggested week-by-week order
+[152] [List Paragraph] Week 1: Auth (signup/login/logout) + Profile + Onboarding flow end-to-end, including plan-generation trigger stub. Home page pre-login.
+[153] [List Paragraph] Week 2: Workout page (pre + post login), Exercise library, AI Workout Generator wired for real, Dashboard v1.
+[154] [List Paragraph] Week 3: Nutrition page (pre + post login) + Diet Tracker + meal logging + substitute suggestions.
+[155] [List Paragraph] Week 4: Progress page (BMI/weight/volume charts, history log) + AI Chatbot.
+[156] [List Paragraph] Week 5: AI CAM page shell (stub) + Pricing/Billing + subscription gating end-to-end.
+[157] [List Paragraph] Week 6: Cross-page polish, responsive QA, disclaimers/copy pass, success-metric instrumentation, bug bash.
+[158] [Normal] Adjust pace to actual availability ΓÇö this is a suggested sequencing, not a fixed calendar.
+[159] [Heading 1] 14. Assumptions & Open Questions To Confirm Before/While Building
+[160] [List Paragraph] AI CAM scope for v1: this manual assumes UI shell + demo only, no live pose tracking, since the explainer places the engine in Phase 2. Confirm this is acceptable given the rough manual's more finished-sounding description of AI CAM's behavior.
+[161] [List Paragraph] Exact feature-to-tier mapping (Section 10) is proposed, not sourced from either document ΓÇö needs a real decision.
+[162] [List Paragraph] ΓÇ£Simulation on the sideΓÇ¥ for exercises (rough manual) is assumed to be pre-made looping animations/GIFs per exercise, not a live 3D render ΓÇö confirm asset source/budget.
+[163] [List Paragraph] Org/B2B seat management is included at a basic level (add/remove seats) since pricing tiers include org pricing; the full Trainer Dashboard itself is Phase 2 and excluded.
+[164] [List Paragraph] Payment gateway: explainer says card/UPI for India; this manual assumes Razorpay as the concrete provider ΓÇö confirm before building the checkout integration.
+[165] [Heading 1] 15. Explicitly Out of Scope for This Build
+[166] [List Paragraph] Live camera-based form correction engine (MediaPipe wired to real-time feedback) ΓÇö Phase 2.
+[167] [List Paragraph] Sleep tracker, menstrual/PCOS mode, sports-specific programs, Trainer Dashboard ΓÇö Phase 2.
+[168] [List Paragraph] Pregnancy/postpartum programs, gym/corporate white-label, nutrition affiliate marketplace, native iOS/Android apps ΓÇö Phase 3.
+[169] [List Paragraph] Any medical/clinical diagnosis feature, anywhere in the product.
+[170] [Heading 1] 16. Briefing Google Antigravity
+[171] [Normal] Antigravity works best when given one task-sized mission at a time and verifies its own work with browser screenshots. Suggested approach:
+[172] [List Paragraph] One mission per page/section above (e.g., ΓÇ£Build the pre-login Workout page per Section 5.2ΓÇ¥) ΓÇö each section in this manual is already scoped to be a single mission brief; paste it directly into a task.
+[173] [List Paragraph] Give the agent the relevant Section 7 tables (data model) and Section 8 (API contract) as shared context on every mission so frontend/backend agents stay consistent.
+[174] [List Paragraph] Ask the agent to verify each mission with a browser screenshot at both 375px and 1280px widths before marking it done ΓÇö matches the responsiveness requirement in Section 11.
+[175] [List Paragraph] Review generated Artifacts (task list, plan, screenshots) before merging ΓÇö leave inline comments for corrections rather than re-prompting from scratch, per Antigravity's feedback model.

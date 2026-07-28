@@ -1,0 +1,45 @@
+﻿[0] [Normal] Forge Manual Website Design ΓÇô Rough
+
+Home Page 
+Home ΓÇô Workout ΓÇô NutritionΓÇöAICAM
+[1] [Normal] -----------Hero----------------------
+[2] [Normal] -----------For Gym-----------------
+Footer
+[4] [Normal] Before Login 
+[5] [List Paragraph] 1. Workout page :-
+[6] [List Paragraph] --List of Workouts ΓÇô This would include the list of workouts  based on targeting different muscle groups likeΓÇö
+[7] [List Paragraph] ChestΓÇö
+[8] [List Paragraph] List of workouts
+[9] [List Paragraph] BackΓÇö
+[10] [List Paragraph] List of workouts
+[11] [List Paragraph] BicepsΓÇö
+[12] [List Paragraph] List of Workouts
+[14] [List Paragraph] --The individual list would contain the names of exercise with the simulation on the side i.e. humanoid or stickman simulation
+[16] [List Paragraph] ---The page would have a option ΓÇôsimilar to give me a personalised workout ---which is our usp based on ai ΓÇô this would require login and would redirect to the login/signup page.
+[18] [Normal] 2. The Nutrition Page 
+[19] [Normal] ---This would contain the facts , major nutritions , info about it and recipes to complete the the users nutrition requirements 
+
+--- This would have a option saying Get Persoanlised recipes or plan --- this would redirect to login/signup page 
+[20] [Normal] 
+3. AI CAM 
+-- This is the main feature of the prodct 
+--It is a CAM which tracks the body points of the user standing in front of the camera using media pipe library (for now)
+[21] [Normal] --This is to check the form of a particular exercise with the help of the tracked body points . This can be done by putting some conditions related to the joint angles , what must be the angle that leads to correct form of any specific exercise---
+[22] [Normal] --The cam would first analyse the body ΓÇô and when we choose a exercise to be performed                  and start doing it , the cam would track the exercise and count the reps and pther factors based on the form. 
+--- So the AI CAM feature would show the basic instructions abput what the AI CAM and small demo thing (before login)
+----would have a try Ai CAM option which should redirect to the login page
+[24] [Normal] 4.Progress:
+[25] [Normal] --Before login ΓÇô this page would hae basic info about what the progress would have like ΓÇôroutines,meals,progresschart etc 
+--the cta ΓÇô direct to login page 
+
+AFTER LOGIN:
+[26] [Normal] 1. It would have the profile section about all its details and similarly abput other pages 
+workout page --- list of workouts + get personalised workout
+nutrtioj- recipes of veg non veg  based on preference and calorie intake 
+ai cam ΓÇô it can be used now 
+
+whenever we do a wokout plan suggested ΓÇô it can be seen in aicam and can be used to check posture and track the reps and other details 
+
+after login it should collect the major information like height weight bmi calculator body type etc 
+
+

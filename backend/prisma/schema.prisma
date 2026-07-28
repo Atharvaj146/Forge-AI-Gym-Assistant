@@ -1,0 +1,218 @@
+// This is your Prisma schema file for FORGE
+// Run: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── USER & AUTH ────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile      Profile?
+  subscription Subscription?
+  workoutPlans WorkoutPlan[]
+  workoutLogs  WorkoutLog[]
+  weightLogs   WeightLog[]
+  mealLogs     MealLog[]
+  chatMessages ChatMessage[]
+  aiCamSessions AiCamSession[]
+}
+
+model Profile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal              Goal
+  experienceLevel   Experience
+  height            Float    // cm
+  weight            Float    // kg
+  age               Int
+  sex               Sex
+  dietaryPreference DietaryPreference
+  location          WorkoutLocation
+  equipment         String[] // e.g. ["dumbbells", "resistance_bands"]
+  onboardingDone    Boolean  @default(false)
+  lastActiveAt      DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// ── ENUMS ─────────────────────────────────────────────────
+
+enum Goal {
+  weight_loss
+  muscle_gain
+  endurance
+  general_fitness
+}
+
+enum Experience {
+  beginner
+  intermediate
+  advanced
+}
+
+enum Sex {
+  male
+  female
+  other
+}
+
+enum DietaryPreference {
+  vegetarian
+  non_vegetarian
+  vegan
+  lactose_free
+  jain
+  diabetic_friendly
+}
+
+enum WorkoutLocation {
+  home
+  gym
+}
+
+enum SubscriptionTier {
+  basic
+  intermediate
+  hardcore
+}
+
+// ── SUBSCRIPTION ───────────────────────────────────────────
+
+model Subscription {
+  id        String           @id @default(cuid())
+  userId    String           @unique
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier      SubscriptionTier @default(basic)
+  startedAt DateTime         @default(now())
+  renewsAt  DateTime?
+  isOrg     Boolean          @default(false)
+  orgSeats  Int?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+// ── WORKOUT PLAN ───────────────────────────────────────────
+
+model WorkoutPlan {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekOf    DateTime
+  isActive  Boolean         @default(true)
+  days      WorkoutPlanDay[]
+  createdAt DateTime        @default(now())
+}
+
+model WorkoutPlanDay {
+  id          String              @id @default(cuid())
+  planId      String
+  plan        WorkoutPlan         @relation(fields: [planId], references: [id], onDelete: Cascade)
+  dayOfWeek   String              // e.g. "Monday"
+  sessionType String              // e.g. "Chest & Triceps"
+  exercises   WorkoutPlanExercise[]
+}
+
+model WorkoutPlanExercise {
+  id         String         @id @default(cuid())
+  dayId      String
+  day        WorkoutPlanDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise       @relation(fields: [exerciseId], references: [id])
+  sets       Int
+  reps       Int
+  restSecs   Int
+  order      Int
+}
+
+model Exercise {
+  id           String   @id @default(cuid())
+  name         String
+  muscleGroup  String
+  description  String
+  difficulty   String
+  equipment    String[]
+  animationUrl String?
+  planExercises WorkoutPlanExercise[]
+}
+
+model WorkoutLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planDayId   String
+  completedAt DateTime @default(now())
+  notes       String?
+}
+
+// ── NUTRITION ─────────────────────────────────────────────
+
+model Recipe {
+  id          String    @id @default(cuid())
+  name        String
+  dietTags    String[]
+  calories    Int
+  protein     Float
+  carbs       Float
+  fat         Float
+  mealLogs    MealLog[]
+}
+
+model MealLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId    String
+  recipe      Recipe   @relation(fields: [recipeId], references: [id])
+  mealType    String   // breakfast / lunch / dinner / snacks
+  portionGrams Float
+  loggedAt    DateTime @default(now())
+}
+
+// ── PROGRESS ──────────────────────────────────────────────
+
+model WeightLog {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weight   Float    // kg
+  bmi      Float    // auto-computed on server
+  loggedAt DateTime @default(now())
+}
+
+// ── AI CHATBOT ────────────────────────────────────────────
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   // "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now())
+}
+
+// ── AI CAM (Phase 2 shell) ────────────────────────────────
+
+model AiCamSession {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exerciseId String?
+  formScore  Float?
+  repCount   Int?
+  notes      String?
+  createdAt  DateTime @default(now())
+}
