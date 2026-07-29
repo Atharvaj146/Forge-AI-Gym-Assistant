@@ -1,65 +1,412 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+
+/* ─────────────────────────────────────────────────────────
+   FLOATING PILL NAVBAR (Matching Attached Image 4)
+───────────────────────────────────────────────────────── */
+function FloatingPillNavbar() {
+  const [activeTab, setActiveTab] = useState("Home");
+
+  const navItems = [
+    { label: "Home", href: "/" },
+    { label: "Workout", href: "/workout" },
+    { label: "Nutrition", href: "/nutrition" },
+    { label: "AICAM", href: "/ai-cam" },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div style={{ position: "fixed", top: 20, left: 0, right: 0, zIndex: 100, padding: "0 1rem" }}>
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="floating-pill-nav"
+      >
+        {/* Left FORGE Text Logo */}
+        <Link href="/" style={{ textDecoration: "none", paddingLeft: "0.75rem", paddingRight: "0.5rem" }}>
+          <span style={{ fontWeight: 800, fontSize: "0.95rem", letterSpacing: "0.08em", color: "#FFFFFF" }}>
+            FORGE
+          </span>
+        </Link>
+
+        {/* Center 4 Links */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`nav-link-item ${activeTab === item.label ? "active" : ""}`}
+              onClick={() => setActiveTab(item.label)}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              {item.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right White Pill Action Button */}
+        <Link href="/signup" className="nav-pill-btn">
+          Get Started →
+        </Link>
+      </motion.nav>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   HERO SECTION (Clean Sans Typography — Satoshi Style)
+───────────────────────────────────────────────────────── */
+function HeroSection() {
+  return (
+    <section
+      style={{
+        position: "relative",
+        minHeight: "90vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        paddingTop: "8.5rem",
+        paddingBottom: "4rem",
+        background: "radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 65%)",
+      }}
+    >
+      <div className="container" style={{ maxWidth: 840 }}>
+        
+        {/* Clean Pill Tag */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}
+        >
+          <div style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            background: "rgba(255, 255, 255, 0.04)",
+            border: "1px solid var(--border)",
+            borderRadius: "9999px",
+            padding: "0.3rem 0.85rem",
+            fontSize: "0.75rem",
+            fontWeight: 500,
+            color: "var(--text-secondary)",
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#8B5CF6" }} />
+            AI Fitness & Performance Copilot
+          </div>
+        </motion.div>
+
+        {/* Satoshi Style Bold Sans Headline (NO CURSIVE/SERIF) */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="hero-title-sans"
+          style={{ marginBottom: "1.5rem" }}
+        >
+          Train Smarter.<br />
+          <span className="text-gradient-purple">Lift Better. Become Stronger.</span>
+        </motion.h1>
+
+        {/* Subhead */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="hero-subtitle-sans"
+          style={{ maxWidth: 540, margin: "0 auto 2.5rem" }}
+        >
+          FORGE combines real-time camera posture analysis with adaptive workout engine programming to optimize your strength progression.
+        </motion.p>
+
+        {/* Action CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          style={{ display: "flex", gap: "0.75rem", justifyContent: "center", marginBottom: "4rem" }}
+        >
+          <Link
+            href="/signup"
+            style={{
+              background: "#FFFFFF",
+              color: "#090A0E",
+              fontSize: "0.9rem",
+              fontWeight: 600,
+              padding: "0.75rem 1.6rem",
+              borderRadius: "9999px",
+              textDecoration: "none",
+              transition: "all 0.2s ease",
+            }}
+          >
+            Start for free →
+          </Link>
+          <Link
+            href="#why-forge"
+            style={{
+              background: "rgba(255, 255, 255, 0.04)",
+              color: "var(--text-primary)",
+              fontSize: "0.9rem",
+              fontWeight: 500,
+              padding: "0.75rem 1.6rem",
+              borderRadius: "9999px",
+              border: "1px solid var(--border)",
+              textDecoration: "none",
+              transition: "all 0.2s ease",
+            }}
+          >
+            Learn more
+          </Link>
+        </motion.div>
+
+        {/* Centered Telemetry Card Frame */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          style={{
+            background: "var(--card)",
+            border: "1px solid var(--border)",
+            borderRadius: "20px",
+            overflow: "hidden",
+            textAlign: "left",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
+          }}
+        >
+          {/* Top Bar */}
+          <div
+            style={{
+              padding: "0.75rem 1.25rem",
+              background: "rgba(255, 255, 255, 0.02)",
+              borderBottom: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div style={{ display: "flex", gap: 6 }}>
+              <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#3A3B40" }} />
+              <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#3A3B40" }} />
+              <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#3A3B40" }} />
+            </div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--text-tertiary)" }}>
+              forge / telemtry-active
+            </div>
+            <div style={{ width: 30 }} />
+          </div>
+
+          {/* Stat Row */}
+          <div style={{ padding: "1.5rem", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+            <div style={{ background: "rgba(9, 10, 14, 0.6)", border: "1px solid var(--border)", borderRadius: "12px", padding: "1rem" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--text-tertiary)", marginBottom: 4 }}>PROGRAMME</div>
+              <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>Hypertrophy Phase</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: 2 }}>Week 3 · Progressive load</div>
+            </div>
+
+            <div style={{ background: "rgba(9, 10, 14, 0.6)", border: "1px solid var(--border)", borderRadius: "12px", padding: "1rem" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--text-tertiary)", marginBottom: 4 }}>AICAM ACCURACY</div>
+              <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#8B5CF6" }}>98.4% Match</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: 2 }}>Real-time camera active</div>
+            </div>
+
+            <div style={{ background: "rgba(9, 10, 14, 0.6)", border: "1px solid var(--border)", borderRadius: "12px", padding: "1rem" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--text-tertiary)", marginBottom: 4 }}>TARGET MACROS</div>
+              <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)" }}>2,850 Kcal</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: 2 }}>180g Protein · 320g Carbs</div>
+            </div>
+          </div>
+        </motion.div>
+
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   WHY FORGE BENTO GRID (Centered & Compact — Attached Images 1 & 3)
+───────────────────────────────────────────────────────── */
+function WhyForgeBento() {
+  return (
+    <section id="why-forge" style={{ padding: "6rem 0" }}>
+      <div className="container bento-container-compact">
+        
+        {/* Section Header */}
+        <div style={{ textAlign: "center", maxWidth: 500, margin: "0 auto 3.5rem" }}>
+          <div style={{
+            display: "inline-block",
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            color: "#8B5CF6",
+            background: "rgba(139, 92, 246, 0.1)",
+            padding: "0.25rem 0.75rem",
+            borderRadius: "9999px",
+            marginBottom: "0.75rem",
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+          }}>
+            Why FORGE
+          </div>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800, letterSpacing: "-0.03em" }}>
+            Everything in One Place
+          </h2>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", marginTop: "0.5rem" }}>
+            Clean, high-performance features designed for optimal training efficiency.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Compact Centered Grid Layout */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: "1.25rem" }}>
+
+          {/* Bento Card 1: AI CAM Posture Analysis */}
+          <div className="bento-card-clean" style={{ gridColumn: "span 7" }}>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>AICAM SYSTEM</span>
+                <span style={{ fontSize: "0.75rem", color: "#8B5CF6", fontWeight: 600 }}>See More →</span>
+              </div>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                AI CAM Posture Correction
+              </h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+                Track joint angles and rep depth in real time using your camera. Biomechanical feedback prevents form degradation.
+              </p>
+            </div>
+
+            {/* Inner Preview Box (Image 1 Style) */}
+            <div style={{ background: "rgba(9, 10, 14, 0.6)", border: "1px solid var(--border)", borderRadius: "12px", padding: "1rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", color: "var(--text-secondary)", marginBottom: 8 }}>
+                <span>Squat Depth Analysis</span>
+                <span style={{ color: "#8B5CF6", fontWeight: 600, fontFamily: "var(--font-mono)" }}>94.2° (Passed)</span>
+              </div>
+              <div style={{ height: 5, background: "rgba(255, 255, 255, 0.08)", borderRadius: 3, overflow: "hidden" }}>
+                <div style={{ width: "94.2%", height: "100%", background: "#8B5CF6" }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Bento Card 2: Adaptive Progression */}
+          <div className="bento-card-clean" style={{ gridColumn: "span 5" }}>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>PROGRESSION</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>See More →</span>
+              </div>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                Adaptive Overload
+              </h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+                Weights and volume automatically adapt week over week based on RPE recovery velocity.
+              </p>
+            </div>
+
+            <div style={{ padding: "0.85rem", background: "rgba(9, 10, 14, 0.6)", border: "1px solid var(--border)", borderRadius: "10px" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--text-tertiary)" }}>LOAD VELOCITY</div>
+              <div style={{ fontSize: "1rem", fontWeight: 700, marginTop: 2 }}>+2.5 kg next workout</div>
+            </div>
+          </div>
+
+          {/* Bento Card 3: Macro Split */}
+          <div className="bento-card-clean" style={{ gridColumn: "span 5" }}>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>NUTRITION</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>See More →</span>
+              </div>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                Precision Macro Engine
+              </h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+                Macro target formulas synchronized with daily training burn and lean mass goals.
+              </p>
+            </div>
+
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              {[["Protein", "180g"], ["Carbs", "320g"], ["Fat", "65g"]].map(([macro, val]) => (
+                <div key={macro} style={{ flex: 1, padding: "0.5rem", background: "rgba(9, 10, 14, 0.6)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                  <div style={{ fontSize: "0.65rem", color: "var(--text-tertiary)" }}>{macro}</div>
+                  <div style={{ fontSize: "0.9rem", fontWeight: 700, marginTop: 2 }}>{val}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bento Card 4: Performance Telemetry */}
+          <div className="bento-card-clean" style={{ gridColumn: "span 7" }}>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>ANALYTICS</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>See More →</span>
+              </div>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                Biometric Telemetry
+              </h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+                Comprehensive tracking for volume trends, estimated 1RM, and body composition analytics.
+              </p>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem" }}>
+              {[
+                { label: "VOLUME", val: "42.8k kg" },
+                { label: "RECOVERY", val: "94 / 100" },
+                { label: "STREAK", val: "18 Days" },
+              ].map((item, i) => (
+                <div key={i} style={{ background: "rgba(9, 10, 14, 0.6)", padding: "0.75rem", borderRadius: "10px", border: "1px solid var(--border)" }}>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "var(--text-tertiary)" }}>{item.label}</div>
+                  <div style={{ fontSize: "1rem", fontWeight: 700, marginTop: 2 }}>{item.val}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   MINIMAL FOOTER
+───────────────────────────────────────────────────────── */
+function MinimalFooter() {
+  return (
+    <footer style={{ borderTop: "1px solid var(--border)", padding: "2.5rem 0", background: "var(--bg)" }}>
+      <div className="container bento-container-compact" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontWeight: 800, fontSize: "0.875rem", letterSpacing: "0.08em", color: "#FFFFFF" }}>FORGE</span>
+        </div>
+
+        <div style={{ display: "flex", gap: "1.5rem", fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
+          <Link href="/" style={{ color: "inherit", textDecoration: "none" }}>Home</Link>
+          <Link href="/workout" style={{ color: "inherit", textDecoration: "none" }}>Workout</Link>
+          <Link href="/nutrition" style={{ color: "inherit", textDecoration: "none" }}>Nutrition</Link>
+          <Link href="/ai-cam" style={{ color: "inherit", textDecoration: "none" }}>AICAM</Link>
+        </div>
+
+        <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", fontFamily: "var(--font-mono)" }}>
+          © 2026 FORGE Inc.
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   MAIN HOMEPAGE
+───────────────────────────────────────────────────────── */
+export default function Home() {
+  return (
+    <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
+      <FloatingPillNavbar />
+      <main>
+        <HeroSection />
+        <WhyForgeBento />
       </main>
+      <MinimalFooter />
     </div>
   );
 }
