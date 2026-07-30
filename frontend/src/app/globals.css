@@ -63,15 +63,15 @@ body {
 }
 
 /* ════════════════════════════════════
-   CLEAN SANS TYPOGRAPHY (NO CURSIVE)
+   CLEAN SANS TYPOGRAPHY
 ════════════════════════════════════ */
 
 .hero-title-sans {
   font-family: var(--font-sans);
-  font-size: clamp(2.4rem, 4.8vw, 3.8rem);
+  font-size: clamp(3.2rem, 7.5vw, 5.8rem);
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.035em;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
   color: var(--text-primary);
 }
 
@@ -91,7 +91,7 @@ body {
 }
 
 /* ════════════════════════════════════
-   FLOATING PILL NAVBAR (Attached Image 4)
+   FLOATING PILL NAVBAR
 ════════════════════════════════════ */
 
 .floating-pill-nav {
@@ -158,7 +158,7 @@ body {
 }
 
 /* ════════════════════════════════════
-   CENTERED COMPACT BENTO CARDS (Image 1 & 3)
+   CENTERED COMPACT CONTAINER
 ════════════════════════════════════ */
 
 .bento-container-compact {
@@ -174,17 +174,47 @@ body {
   position: relative;
   overflow: hidden;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .bento-card-clean:hover {
   border-color: var(--border-strong);
   background: var(--surface-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
 }
+
+/* ════════════════════════════════════
+   STICKMAN SIMULATION CSS ANIMATIONS
+════════════════════════════════════ */
+
+@keyframes chestPressBar {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(22px); }
+}
+
+@keyframes squatDepth {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(32px); }
+}
+
+@keyframes rowPullBar {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-24px); }
+}
+
+@keyframes curlForearm {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-65deg); }
+}
+
+@keyframes shoulderPressBar {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-28px); }
+}
+
+.sim-chest-press { animation: chestPressBar 2.6s ease-in-out infinite; }
+.sim-squat { animation: squatDepth 3s ease-in-out infinite; }
+.sim-row { animation: rowPullBar 2.5s ease-in-out infinite; }
+.sim-curl { transform-origin: 35px 45px; animation: curlForearm 2.4s ease-in-out infinite; }
+.sim-shoulder-press { animation: shoulderPressBar 2.6s ease-in-out infinite; }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 5px; }
