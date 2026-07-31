@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { Spotlight } from "@/components/ui/Spotlight";
+import { GridBackground } from "@/components/ui/GridBackground";
+import { Twitter, Linkedin, Github, Facebook, Instagram } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────
    FLOATING PILL NAVBAR (Matching Attached Image 4)
@@ -60,21 +63,25 @@ function FloatingPillNavbar() {
 ───────────────────────────────────────────────────────── */
 function HeroSection() {
   return (
-    <section
-      style={{
-        position: "relative",
-        minHeight: "90vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-        paddingTop: "8.5rem",
-        paddingBottom: "4rem",
-        background: "radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 65%)",
-      }}
-    >
-      <div className="container" style={{ maxWidth: 840 }}>
+    <GridBackground type="grid-small" className="min-h-[90vh]">
+      <section
+        style={{
+          position: "relative",
+          minHeight: "90vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          paddingTop: "8.5rem",
+          paddingBottom: "4rem",
+          overflow: "hidden",
+        }}
+      >
+        {/* Aceternity UI Spotlight Effect */}
+        <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="#8B5CF6" />
+
+        <div className="container" style={{ maxWidth: 840, position: "relative", zIndex: 10 }}>
         
         {/* Clean Pill Tag */}
         <motion.div
@@ -223,11 +230,12 @@ function HeroSection() {
 
       </div>
     </section>
+    </GridBackground>
   );
 }
 
 /* ─────────────────────────────────────────────────────────
-   WHY FORGE BENTO GRID (Centered & Compact — Attached Images 1 & 3)
+   WHY FORGE BENTO GRID (Centered & Compact Clean Layout)
 ───────────────────────────────────────────────────────── */
 function WhyForgeBento() {
   return (
@@ -248,17 +256,17 @@ function WhyForgeBento() {
             letterSpacing: "0.05em",
             textTransform: "uppercase",
           }}>
-            Why FORGE
+            CORE PLATFORM
           </div>
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800, letterSpacing: "-0.03em" }}>
             Everything in One Place
           </h2>
           <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", marginTop: "0.5rem" }}>
-            Clean, high-performance features designed for optimal training efficiency.
+            High-performance features designed for optimal training efficiency.
           </p>
         </div>
 
-        {/* Compact Centered Grid Layout */}
+        {/* Compact Clean Bento Grid Layout */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: "1.25rem" }}>
 
           {/* Bento Card 1: AI CAM Posture Analysis */}
@@ -269,14 +277,14 @@ function WhyForgeBento() {
                 <span style={{ fontSize: "0.75rem", color: "#8B5CF6", fontWeight: 600 }}>See More →</span>
               </div>
               <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-                AI CAM Posture Correction
+                AI Cam Posture Correction
               </h3>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                Track joint angles and rep depth in real time using your camera. Biomechanical feedback prevents form degradation.
+                Real-time camera joint tracking to monitor rep depth and prevent form breakdown.
               </p>
             </div>
 
-            {/* Inner Preview Box (Image 1 Style) */}
+            {/* Inner Preview Box */}
             <div style={{ background: "rgba(9, 10, 14, 0.6)", border: "1px solid var(--border)", borderRadius: "12px", padding: "1rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", color: "var(--text-secondary)", marginBottom: 8 }}>
                 <span>Squat Depth Analysis</span>
@@ -288,18 +296,18 @@ function WhyForgeBento() {
             </div>
           </div>
 
-          {/* Bento Card 2: Adaptive Progression */}
+          {/* Bento Card 2: Personalised Workout */}
           <div className="bento-card-clean" style={{ gridColumn: "span 5" }}>
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>PROGRESSION</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>WORKOUT ENGINE</span>
                 <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>See More →</span>
               </div>
               <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-                Adaptive Overload
+                Adaptive Workout Routines
               </h3>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                Weights and volume automatically adapt week over week based on RPE recovery velocity.
+                Personalized training splits with dynamic weight and volume progression.
               </p>
             </div>
 
@@ -309,23 +317,23 @@ function WhyForgeBento() {
             </div>
           </div>
 
-          {/* Bento Card 3: Macro Split */}
+          {/* Bento Card 3: Personalised Nutrition */}
           <div className="bento-card-clean" style={{ gridColumn: "span 5" }}>
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>NUTRITION</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>NUTRITION ENGINE</span>
                 <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>See More →</span>
               </div>
               <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-                Precision Macro Engine
+                Precision Macro Calculator
               </h3>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                Macro target formulas synchronized with daily training burn and lean mass goals.
+                Tailored calorie and macro target calculations synced to your daily goals.
               </p>
             </div>
 
             <div style={{ display: "flex", gap: "0.5rem" }}>
-              {[["Protein", "180g"], ["Carbs", "320g"], ["Fat", "65g"]].map(([macro, val]) => (
+              {[["Protein", "203g"], ["Carbs", "305g"], ["Fat", "75g"]].map(([macro, val]) => (
                 <div key={macro} style={{ flex: 1, padding: "0.5rem", background: "rgba(9, 10, 14, 0.6)", border: "1px solid var(--border)", borderRadius: "8px" }}>
                   <div style={{ fontSize: "0.65rem", color: "var(--text-tertiary)" }}>{macro}</div>
                   <div style={{ fontSize: "0.9rem", fontWeight: 700, marginTop: 2 }}>{val}</div>
@@ -334,25 +342,25 @@ function WhyForgeBento() {
             </div>
           </div>
 
-          {/* Bento Card 4: Performance Telemetry */}
+          {/* Bento Card 4: Progress Tracker */}
           <div className="bento-card-clean" style={{ gridColumn: "span 7" }}>
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>ANALYTICS</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-tertiary)" }}>PROGRESS TRACKER</span>
                 <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>See More →</span>
               </div>
               <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-                Biometric Telemetry
+                Strength & Biometric Tracking
               </h3>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-                Comprehensive tracking for volume trends, estimated 1RM, and body composition analytics.
+                Automated 1RM progression charts, volume load stats, and training streak logs.
               </p>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem" }}>
               {[
                 { label: "VOLUME", val: "42.8k kg" },
-                { label: "RECOVERY", val: "94 / 100" },
+                { label: "1RM BENCH", val: "125 kg" },
                 { label: "STREAK", val: "18 Days" },
               ].map((item, i) => (
                 <div key={i} style={{ background: "rgba(9, 10, 14, 0.6)", padding: "0.75rem", borderRadius: "10px", border: "1px solid var(--border)" }}>
