@@ -348,7 +348,7 @@ export default function NutritionPage() {
     : popularFoods.filter((f) => f.category === activeCategory);
 
   return (
-    <div style={{ background: "var(--bg)", minHeight: "100vh", color: "var(--text-primary)" }}>
+    <div style={{ background: "transparent", minHeight: "100vh", color: "var(--text-primary)" }}>
       <FloatingPillNavbar />
 
       <main style={{ paddingTop: "8rem", paddingBottom: "6rem" }}>

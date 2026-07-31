@@ -382,7 +382,7 @@ function WhyForgeBento() {
 ───────────────────────────────────────────────────────── */
 function MinimalFooter() {
   return (
-    <footer style={{ borderTop: "1px solid var(--border)", padding: "2.5rem 0", background: "var(--bg)" }}>
+    <footer style={{ borderTop: "1px solid var(--border)", padding: "2.5rem 0", background: "transparent" }}>
       <div className="container bento-container-compact" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontWeight: 800, fontSize: "0.875rem", letterSpacing: "0.08em", color: "#FFFFFF" }}>FORGE</span>
@@ -408,7 +408,7 @@ function MinimalFooter() {
 ───────────────────────────────────────────────────────── */
 export default function Home() {
   return (
-    <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
+    <div style={{ background: "transparent", minHeight: "100vh" }}>
       <FloatingPillNavbar />
       <main>
         <HeroSection />

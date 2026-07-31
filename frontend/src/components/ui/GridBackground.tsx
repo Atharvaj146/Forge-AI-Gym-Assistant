@@ -25,10 +25,10 @@ export function GridBackground({
   const bgSize = type === "dots" ? "24px 24px" : type === "grid-small" ? "20px 20px" : "40px 40px";
 
   return (
-    <div className={cn("relative w-full overflow-hidden bg-[#090A0E]", className)}>
+    <div className={cn("relative w-full min-h-screen bg-[#090A0E]", className)}>
       {/* Grid / Dot Pattern Layer */}
       <div
-        className="absolute inset-0 pointer-events-none z-0"
+        className="fixed inset-0 pointer-events-none z-0"
         style={{
           backgroundImage: getPattern(),
           backgroundSize: bgSize,
@@ -37,9 +37,9 @@ export function GridBackground({
 
       {/* Radial Gradient Vignette Mask to softly fade grid into dark background */}
       <div
-        className="absolute inset-0 pointer-events-none z-0"
+        className="fixed inset-0 pointer-events-none z-0"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 10%, #090A0E 75%)",
+          background: "radial-gradient(ellipse at center, transparent 20%, #090A0E 85%)",
         }}
       />
 
