@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { authenticate, AuthRequest } from '../middleware/auth.middleware';
+import { supabase } from '../lib/supabase';
 
 const router = Router();
 
-// ── Validation Schemas ────────────────────────────────────
 const signupSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
@@ -17,76 +17,114 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-// ── POST /api/auth/signup ─────────────────────────────────
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: (process.env.NODE_ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
+const signToken = (user: { id: string; email: string; name: string }) =>
+  jwt.sign({ id: user.id, email: user.email, name: user.name }, process.env.JWT_SECRET as string, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  });
+
 router.post('/signup', async (req: Request, res: Response) => {
   try {
     const { name, email, password } = signupSchema.parse(req.body);
 
-    // TODO: Check if user already exists via Prisma
-    // const existing = await prisma.user.findUnique({ where: { email } });
-    // if (existing) return res.status(409).json({ success: false, message: 'Email already in use' });
+    console.log('[DEBUG] Signup payload:', { name, email });
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
-    // TODO: Create user in DB
-    // const user = await prisma.user.create({ data: { name, email, password: hashedPassword } });
+    console.log('[DEBUG] Supabase signUp result:', { authError, authData: authData ? { user: authData.user?.id } : null });
 
-    const token = jwt.sign(
-      { id: 'stub-user-id', email },
-      process.env.JWT_SECRET as string,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
+    if (authError || !authData?.user) {
+      console.error('[DEBUG] signUp failed detail:', authError);
+      return res.status(400).json({ success: false, message: authError?.message || 'Signup failed' });
+    }
 
-    res.status(201).json({
+    const user = {
+      id: authData.user.id,
+      name,
+      email: authData.user.email || email,
+    };
+
+    const token = signToken(user);
+    res.cookie('auth_token', token, cookieOptions);
+
+    return res.status(201).json({
       success: true,
       message: 'Account created successfully',
-      token,
-      user: { id: 'stub-user-id', name, email },
+      user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (err) {
     if (err instanceof z.ZodError) {
-      res.status(400).json({ success: false, errors: err.errors });
-    } else {
-      res.status(500).json({ success: false, message: 'Signup failed' });
+      return res.status(400).json({ success: false, errors: err.errors });
     }
+
+    console.error('Signup failed (exception):', err);
+    return res.status(500).json({
+      success: false,
+      message: err instanceof Error ? err.message : 'Signup failed',
+      error: err instanceof Error ? err.stack : undefined,
+    });
   }
 });
 
-// ── POST /api/auth/login ──────────────────────────────────
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
 
-    // TODO: Find user in DB
-    // const user = await prisma.user.findUnique({ where: { email } });
-    // if (!user) return res.status(401).json({ success: false, message: 'Invalid credentials' });
-    // const valid = await bcrypt.compare(password, user.password);
-    // if (!valid) return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    console.log('[DEBUG] Login payload:', { email });
 
-    const token = jwt.sign(
-      { id: 'stub-user-id', email },
-      process.env.JWT_SECRET as string,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    console.log('[DEBUG] Supabase signInWithPassword result:', { authError, userId: authData?.user?.id });
 
-    res.json({
+    if (authError || !authData?.user) {
+      console.error('[DEBUG] login failed detail:', authError);
+      return res.status(401).json({ success: false, message: authError?.message || 'Invalid credentials', error: authError });
+    }
+
+    const user = {
+      id: authData.user.id,
+      name: authData.user.user_metadata?.full_name || 'FORGE User',
+      email: authData.user.email || email,
+    };
+
+    const token = signToken(user);
+    res.cookie('auth_token', token, cookieOptions);
+
+    return res.json({
       success: true,
-      token,
-      user: { id: 'stub-user-id', email },
+      message: 'Login successful',
+      user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (err) {
     if (err instanceof z.ZodError) {
-      res.status(400).json({ success: false, errors: err.errors });
-    } else {
-      res.status(500).json({ success: false, message: 'Login failed' });
+      return res.status(400).json({ success: false, errors: err.errors });
     }
+
+    console.error('Login failed:', err);
+    return res.status(500).json({ success: false, message: 'Login failed' });
   }
 });
 
-// ── POST /api/auth/logout ─────────────────────────────────
+router.get('/me', authenticate, async (_req: AuthRequest, res: Response) => {
+  try {
+    return res.json({ success: true, user: { id: _req.user?.id, email: _req.user?.email, name: _req.user?.name } });
+  } catch (err) {
+    console.error('Fetch current user failed:', err);
+    return res.status(500).json({ success: false, message: 'Unable to fetch user profile' });
+  }
+});
+
 router.post('/logout', (_req: Request, res: Response) => {
-  // JWT is stateless — client drops the token
-  res.json({ success: true, message: 'Logged out successfully' });
+  res.clearCookie('auth_token', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: (process.env.NODE_ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax' });
+  return res.json({ success: true, message: 'Logged out successfully' });
 });
 
 export default router;

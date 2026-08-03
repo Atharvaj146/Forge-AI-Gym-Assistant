@@ -1,15 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
-// ── Routes ────────────────────────────────────────────────
-import authRoutes from './routes/auth.routes';
-import userRoutes from './routes/user.routes';
-import workoutRoutes from './routes/workout.routes';
-import nutritionRoutes from './routes/nutrition.routes';
-import progressRoutes from './routes/progress.routes';
-import chatRoutes from './routes/chat.routes';
-
+// Load env early
 dotenv.config();
 
 const app = express();
@@ -22,6 +16,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // ── Health Check ──────────────────────────────────────────
 app.get('/health', (_req, res) => {
@@ -33,28 +28,42 @@ app.get('/health', (_req, res) => {
   });
 });
 
-// ── API Routes ────────────────────────────────────────────
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/workouts', workoutRoutes);
-app.use('/api/nutrition', nutritionRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/chat', chatRoutes);
+async function startServer() {
+  // Import routes after env is loaded so modules that use process.env work correctly
+  const authRoutes = (await import('./routes/auth.routes')).default;
+  const userRoutes = (await import('./routes/user.routes')).default;
+  const workoutRoutes = (await import('./routes/workout.routes')).default;
+  const nutritionRoutes = (await import('./routes/nutrition.routes')).default;
+  const progressRoutes = (await import('./routes/progress.routes')).default;
+  const chatRoutes = (await import('./routes/chat.routes')).default;
 
-// ── 404 Handler ───────────────────────────────────────────
-app.use((_req, res) => {
-  res.status(404).json({ success: false, message: 'Route not found' });
-});
+  // ── API Routes ───────────────────────────────────────────-
+  app.use('/api/auth', authRoutes);
+  app.use('/api/users', userRoutes);
+  app.use('/api/workouts', workoutRoutes);
+  app.use('/api/nutrition', nutritionRoutes);
+  app.use('/api/progress', progressRoutes);
+  app.use('/api/chat', chatRoutes);
 
-// ── Error Handler ─────────────────────────────────────────
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ success: false, message: 'Internal Server Error' });
-});
+  // ── 404 Handler ───────────────────────────────────────────
+  app.use((_req, res) => {
+    res.status(404).json({ success: false, message: 'Route not found' });
+  });
 
-app.listen(PORT, () => {
-  console.log(`🚀 FORGE API running at http://localhost:${PORT}`);
-  console.log(`📋 Health check: http://localhost:${PORT}/health`);
+  // ── Error Handler ─────────────────────────────────────────
+  app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    console.error(err.stack);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  });
+
+  app.listen(PORT, () => {
+    console.log(`🚀 FORGE API running at http://localhost:${PORT}`);
+    console.log(`📋 Health check: http://localhost:${PORT}/health`);
+  });
+}
+
+startServer().catch((err) => {
+  console.error('Failed to start server:', err);
 });
 
 export default app;
