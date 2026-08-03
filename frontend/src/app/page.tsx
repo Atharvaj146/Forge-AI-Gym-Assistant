@@ -50,7 +50,7 @@ function FloatingPillNavbar() {
         </div>
 
         {/* Right White Pill Action Button */}
-        <Link href="/signup" className="nav-pill-btn">
+        <Link href="/login" className="nav-pill-btn">
           Get Started →
         </Link>
       </motion.nav>
@@ -138,7 +138,7 @@ function HeroSection() {
           style={{ display: "flex", gap: "0.75rem", justifyContent: "center", marginBottom: "4rem" }}
         >
           <Link
-            href="/signup"
+            href="/login"
             style={{
               background: "#FFFFFF",
               color: "#090A0E",
