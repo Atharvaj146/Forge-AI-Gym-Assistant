@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { GridBackground } from "@/components/ui/GridBackground";
+import { AuthProvider } from "@/lib/AuthProvider";
 
 export const metadata: Metadata = {
   title: "FORGE — Train Smarter. Lift Better. Become Stronger.",
@@ -22,9 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <GridBackground type="grid-small">
-          {children}
-        </GridBackground>
+        <AuthProvider>
+          <GridBackground type="grid-small">
+            {children}
+          </GridBackground>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -30,7 +30,7 @@ function MuscleMesh({
   rotation?: [number, number, number];
   scale?: [number, number, number];
   geometryType?: "box" | "sphere" | "capsule" | "cylinder";
-  args?: any[];
+  args?: any;
 }) {
   const [hovered, setHovered] = useState(false);
   const isActive = activeCategory === category || hovered;

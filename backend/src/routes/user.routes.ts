@@ -12,9 +12,8 @@ router.get('/profile', authenticate, (req: AuthRequest, res: Response) => {
     user: {
       id: req.user!.id,
       email: req.user!.email,
-      // stub — replace with real Prisma data
-      name: 'John Doe',
-      goal: 'muscle_gain',
+      name: req.user?.name || req.user?.email?.split('@')[0] || 'User',
+      goal: 'general_fitness',
       experience: 'intermediate',
       height: 175,
       weight: 75,
