@@ -38,6 +38,12 @@ router.post('/signup', async (req: Request, res: Response) => {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: name,
+          name: name,
+        },
+      },
     });
 
     console.log('[DEBUG] Supabase signUp result:', { authError, authData: authData ? { user: authData.user?.id } : null });
@@ -49,7 +55,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 
     const user = {
       id: authData.user.id,
-      name,
+      name: name || authData.user.user_metadata?.full_name || authData.user.email?.split('@')[0] || 'User',
       email: authData.user.email || email,
     };
 
@@ -89,9 +95,14 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ success: false, message: authError?.message || 'Invalid credentials', error: authError });
     }
 
+    const userName =
+      authData.user.user_metadata?.full_name ||
+      authData.user.user_metadata?.name ||
+      (authData.user.email ? authData.user.email.split('@')[0] : 'User');
+
     const user = {
       id: authData.user.id,
-      name: authData.user.user_metadata?.full_name || 'FORGE User',
+      name: userName,
       email: authData.user.email || email,
     };
 
@@ -122,9 +133,52 @@ router.get('/me', authenticate, async (_req: AuthRequest, res: Response) => {
   }
 });
 
+router.post('/google-callback', async (req: Request, res: Response) => {
+  try {
+    const { access_token } = req.body;
+
+    if (!access_token) {
+      return res.status(400).json({ success: false, message: 'Missing access token' });
+    }
+
+    // Verify the token with Supabase and get the user
+    const { data, error } = await supabase.auth.getUser(access_token);
+
+    if (error || !data?.user) {
+      console.error('[DEBUG] Google callback token verification failed:', error);
+      return res.status(401).json({ success: false, message: error?.message || 'Invalid token' });
+    }
+
+    const supabaseUser = data.user;
+    const userName =
+      supabaseUser.user_metadata?.full_name ||
+      supabaseUser.user_metadata?.name ||
+      (supabaseUser.email ? supabaseUser.email.split('@')[0] : 'User');
+
+    const user = {
+      id: supabaseUser.id,
+      name: userName,
+      email: supabaseUser.email || '',
+    };
+
+    const token = signToken(user);
+    res.cookie('auth_token', token, cookieOptions);
+
+    return res.json({
+      success: true,
+      message: 'Google login successful',
+      user: { id: user.id, name: user.name, email: user.email },
+    });
+  } catch (err) {
+    console.error('Google callback failed:', err);
+    return res.status(500).json({ success: false, message: 'Google login failed' });
+  }
+});
+
 router.post('/logout', (_req: Request, res: Response) => {
   res.clearCookie('auth_token', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: (process.env.NODE_ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax' });
   return res.json({ success: true, message: 'Logged out successfully' });
 });
 
 export default router;
+
