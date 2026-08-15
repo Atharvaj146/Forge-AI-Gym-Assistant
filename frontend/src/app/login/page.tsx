@@ -16,6 +16,17 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Client-side validation before hitting the server
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    if (mode === "signup" && name.trim().length < 2) {
+      setError("Name must be at least 2 characters.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -33,12 +44,17 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Authentication failed");
+        // Handle Zod validation errors (array of field errors)
+        if (data.errors && Array.isArray(data.errors)) {
+          const messages = data.errors.map((e: { message: string }) => e.message).join(" ");
+          throw new Error(messages);
+        }
+        throw new Error(data.message || "Authentication failed. Please check your credentials.");
       }
 
-      router.push("/not-found");
+      router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -49,11 +49,11 @@ function NumberTicker({ value, unit = "" }: { value: number; unit?: string }) {
 }
 
 const GOAL_CONFIGS: Record<Goal, { label: string; emoji: string; proteinRatio: number; carbRatio: number; fatRatio: number; adjustment: number }> = {
-  bulking:      { label: "Bulking",           emoji: "📈", proteinRatio: 0.30, carbRatio: 0.50, fatRatio: 0.20, adjustment: +400 },
-  cutting:      { label: "Cutting",           emoji: "🔥", proteinRatio: 0.40, carbRatio: 0.30, fatRatio: 0.30, adjustment: -400 },
-  maintenance:  { label: "Maintenance",       emoji: "⚖️", proteinRatio: 0.30, carbRatio: 0.45, fatRatio: 0.25, adjustment: 0   },
-  athletic:     { label: "Athletic Perf.",    emoji: "⚡", proteinRatio: 0.25, carbRatio: 0.55, fatRatio: 0.20, adjustment: +200 },
-  "weight-loss":{ label: "Weight Loss",       emoji: "🎯", proteinRatio: 0.40, carbRatio: 0.25, fatRatio: 0.35, adjustment: -600 },
+  bulking:      { label: "Bulking",           emoji: "📈", proteinRatio: 0.25, carbRatio: 0.50, fatRatio: 0.25, adjustment: +400 },
+  cutting:      { label: "Cutting",           emoji: "🔥", proteinRatio: 0.35, carbRatio: 0.40, fatRatio: 0.25, adjustment: -400 },
+  maintenance:  { label: "Maintenance",       emoji: "⚖️", proteinRatio: 0.25, carbRatio: 0.50, fatRatio: 0.25, adjustment: 0   },
+  athletic:     { label: "Athletic Perf.",    emoji: "⚡", proteinRatio: 0.20, carbRatio: 0.55, fatRatio: 0.25, adjustment: +200 },
+  "weight-loss":{ label: "Weight Loss",       emoji: "🎯", proteinRatio: 0.30, carbRatio: 0.45, fatRatio: 0.25, adjustment: -500 },
 };
 
 const ACTIVITY_MULTIPLIERS: Record<Activity, number> = {
