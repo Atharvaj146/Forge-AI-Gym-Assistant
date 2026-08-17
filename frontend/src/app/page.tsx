@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Spotlight } from "@/components/ui/Spotlight";
 import { GridBackground } from "@/components/ui/GridBackground";
-import { Twitter, Linkedin, Github, Facebook, Instagram } from "lucide-react";
+
 
 /* ─────────────────────────────────────────────────────────
    FLOATING PILL NAVBAR (Matching Attached Image 4)
