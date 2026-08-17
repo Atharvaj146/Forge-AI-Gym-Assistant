@@ -26,7 +26,7 @@ const cookieOptions = {
 
 const signToken = (user: { id: string; email: string; name: string }) =>
   jwt.sign({ id: user.id, email: user.email, name: user.name }, process.env.JWT_SECRET as string, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as jwt.SignOptions['expiresIn'],
   });
 
 router.post('/signup', async (req: Request, res: Response) => {
@@ -69,7 +69,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     });
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ success: false, errors: err.errors });
+      return res.status(400).json({ success: false, errors: err.issues });
     }
 
     console.error('Signup failed (exception):', err);
@@ -116,7 +116,7 @@ router.post('/login', async (req: Request, res: Response) => {
     });
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ success: false, errors: err.errors });
+      return res.status(400).json({ success: false, errors: err.issues });
     }
 
     console.error('Login failed:', err);

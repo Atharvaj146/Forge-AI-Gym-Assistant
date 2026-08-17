@@ -14,7 +14,7 @@ export default function AuthCallbackPage() {
     // Listen for auth state changes — Supabase will process the URL
     // hash/code and fire SIGNED_IN once the session is ready
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event: any, session: any) => {
         if (handled.current) return;
 
         if (event === "SIGNED_IN" && session) {

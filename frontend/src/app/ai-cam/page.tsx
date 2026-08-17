@@ -637,6 +637,32 @@ function PrivacyCard() {
 }
 
 /* ─────────────────────────────────────────────────────────
+   MINIMAL FOOTER
+───────────────────────────────────────────────────────── */
+function MinimalFooter() {
+  return (
+    <footer style={{ borderTop: "1px solid var(--border)", padding: "2.5rem 0", background: "transparent" }}>
+      <div className="container bento-container-compact" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontWeight: 800, fontSize: "0.875rem", letterSpacing: "0.08em", color: "#FFFFFF" }}>FORGE</span>
+        </div>
+
+        <div style={{ display: "flex", gap: "1.5rem", fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
+          <Link href="/" style={{ color: "inherit", textDecoration: "none" }}>Home</Link>
+          <Link href="/workout" style={{ color: "inherit", textDecoration: "none" }}>Workout</Link>
+          <Link href="/nutrition" style={{ color: "inherit", textDecoration: "none" }}>Nutrition</Link>
+          <Link href="/ai-cam" style={{ color: "inherit", textDecoration: "none" }}>AICAM</Link>
+        </div>
+
+        <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", fontFamily: "var(--font-mono)" }}>
+          © 2026 FORGE Inc.
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
    MAIN AI CAM LANDING PAGE
 ───────────────────────────────────────────────────────── */
 export default function AICamPage() {
@@ -719,6 +745,7 @@ export default function AICamPage() {
             </Link>
           </div>
 
+        </div>
       </main>
 
       <MinimalFooter />
