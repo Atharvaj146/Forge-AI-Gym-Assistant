@@ -1,74 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const exerciseId = searchParams.get("exerciseId");
   const category = searchParams.get("category") || "";
 
-  const apiKey = process.env.NEXT_PUBLIC_RAPIDAPI_KEY || process.env.RAPIDAPI_KEY || "d259c40a16msh47001b262a50f32p137780jsn669e767e737b";
-  const apiHost = process.env.RAPIDAPI_EXERCISEDB_HOST || "exercisedb.p.rapidapi.com";
+  // Path to local dataset in public/data/exercises.json
+  const jsonPath = path.join(process.cwd(), "public", "data", "exercises.json");
 
-  // CASE 1: Fetch Official ExerciseDB Image Endpoint by Exercise ID
-  if (exerciseId) {
-    try {
-      const imgRes = await fetch(`https://${apiHost}/image?exerciseId=${encodeURIComponent(exerciseId)}&resolution=360`, {
-        headers: {
-          "x-rapidapi-key": apiKey,
-          "x-rapidapi-host": apiHost,
-        },
-      });
+  try {
+    if (!fs.existsSync(jsonPath)) {
+      return NextResponse.json({ error: "Local exercises.json dataset not found" }, { status: 404 });
+    }
 
-      if (!imgRes.ok) {
-        return new NextResponse(`ExerciseDB Image Error: ${imgRes.statusText}`, { status: imgRes.status });
+    const rawData = fs.readFileSync(jsonPath, "utf-8");
+    const exercises: any[] = JSON.parse(rawData);
+
+    // CASE 1: Requesting a specific exercise GIF by exerciseId
+    if (exerciseId) {
+      const match = exercises.find((e) => e.exerciseId === exerciseId || e.id === exerciseId);
+      const gifFilename = match?.gifUrl || `${exerciseId}.gif`;
+      const gifPath = path.join(process.cwd(), "public", "gif", "gifs_360x360", gifFilename);
+
+      if (fs.existsSync(gifPath)) {
+        const fileBuffer = fs.readFileSync(gifPath);
+        return new NextResponse(fileBuffer, {
+          headers: {
+            "Content-Type": "image/gif",
+            "Cache-Control": "public, max-age=86400, s-maxage=86400",
+          },
+        });
       }
 
-      const arrayBuffer = await imgRes.arrayBuffer();
-      return new NextResponse(arrayBuffer, {
-        headers: {
-          "Content-Type": imgRes.headers.get("content-type") || "image/gif",
-          "Cache-Control": "public, max-age=86400, s-maxage=86400",
-        },
+      return NextResponse.json({ error: "GIF file not found locally" }, { status: 404 });
+    }
+
+    // CASE 2: Filtering exercises by category locally
+    if (category) {
+      const catLower = category.toLowerCase();
+      const filtered = exercises.filter((ex) => {
+        const bp = (ex.bodyParts || []).map((s: string) => s.toLowerCase());
+        const tm = (ex.targetMuscles || []).map((s: string) => s.toLowerCase());
+        const sm = (ex.secondaryMuscles || []).map((s: string) => s.toLowerCase());
+
+        if (catLower === "chest") return bp.includes("chest") || tm.includes("pectorals");
+        if (catLower === "back") return bp.includes("back") || tm.includes("lats") || tm.includes("upper back") || tm.includes("spine");
+        if (catLower === "biceps") return tm.includes("biceps") || sm.includes("biceps") || (bp.includes("upper arms") && tm.includes("biceps"));
+        if (catLower === "triceps") return tm.includes("triceps") || sm.includes("triceps") || (bp.includes("upper arms") && tm.includes("triceps"));
+        if (catLower === "shoulders") return bp.includes("shoulders") || tm.includes("delts");
+        if (catLower === "legs") return bp.includes("upper legs") || bp.includes("lower legs") || tm.includes("glutes") || tm.includes("calves") || tm.includes("quadriceps");
+        return false;
       });
-    } catch (e: any) {
-      return new NextResponse(`Image stream error: ${e.message}`, { status: 500 });
-    }
-  }
 
-  // CASE 2: Query exercise data by category from RapidAPI ExerciseDB
-  try {
-    let endpoint = `https://${apiHost}/exercises?limit=30`;
-
-    const catLower = category.toLowerCase();
-    if (catLower === "chest") {
-      endpoint = `https://${apiHost}/exercises/bodyPart/chest`;
-    } else if (catLower === "back") {
-      endpoint = `https://${apiHost}/exercises/bodyPart/back`;
-    } else if (catLower === "biceps") {
-      endpoint = `https://${apiHost}/exercises/target/biceps`;
-    } else if (catLower === "triceps") {
-      endpoint = `https://${apiHost}/exercises/target/triceps`;
-    } else if (catLower === "shoulders") {
-      endpoint = `https://${apiHost}/exercises/bodyPart/shoulders`;
-    } else if (catLower === "legs") {
-      endpoint = `https://${apiHost}/exercises/bodyPart/upper%20legs`;
+      return NextResponse.json(filtered.length > 0 ? filtered : exercises.slice(0, 10));
     }
 
-    const response = await fetch(endpoint, {
-      method: "GET",
-      headers: {
-        "x-rapidapi-key": apiKey,
-        "x-rapidapi-host": apiHost,
-      },
-      next: { revalidate: 86400 },
-    });
-
-    if (!response.ok) {
-      return NextResponse.json({ error: `RapidAPI error: ${response.statusText}` }, { status: response.status });
-    }
-
-    const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json(exercises);
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to fetch exercise data" }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Failed to load local exercise data" }, { status: 500 });
   }
 }

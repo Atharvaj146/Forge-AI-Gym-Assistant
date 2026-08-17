@@ -151,12 +151,15 @@ function ExerciseCard({ item, category }: { item: any; category: string }) {
   const [showSteps, setShowSteps] = useState(false);
   const [imgError, setImgError] = useState(false);
 
-  const exerciseId = item.id;
-  const imageEndpoint = exerciseId ? `/api/exercise-image?exerciseId=${encodeURIComponent(exerciseId)}` : null;
+  const gifPath = item.gifUrl
+    ? item.gifUrl.startsWith("http")
+      ? item.gifUrl
+      : `/gif/gifs_360x360/${item.gifUrl}`
+    : null;
 
   const exerciseName = item.name ? item.name.toUpperCase() : "EXERCISE";
-  const targetName = item.target || "Target Muscle";
-  const equipmentName = item.equipment || "Equipment";
+  const targetName = Array.isArray(item.targetMuscles) ? item.targetMuscles.join(", ") : (item.target || "Target Muscle");
+  const equipmentName = Array.isArray(item.equipments) ? item.equipments.join(", ") : (item.equipment || "Equipment");
   const secondaryList: string[] = item.secondaryMuscles || [];
   const instructionsList: string[] = item.instructions || [
     "Position body with proper alignment.",
@@ -179,7 +182,7 @@ function ExerciseCard({ item, category }: { item: any; category: string }) {
         alignItems: "flex-start",
       }}
     >
-      {/* Left: Official ExerciseDB GIF Endpoint or Fallback Graphic */}
+      {/* Left: Local Exercise GIF or Vector Fallback Graphic */}
       <div style={{
         background: "rgba(9, 10, 14, 0.9)",
         border: "1px solid var(--border)",
@@ -192,9 +195,9 @@ function ExerciseCard({ item, category }: { item: any; category: string }) {
         overflow: "hidden",
         position: "relative",
       }}>
-        {imageEndpoint && !imgError ? (
+        {gifPath && !imgError ? (
           <img
-            src={imageEndpoint}
+            src={gifPath}
             alt={exerciseName}
             onError={() => setImgError(true)}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -310,16 +313,31 @@ export default function WorkoutPage() {
     },
   ];
 
-  // Fetch live exercises for activeCategory using RapidAPI BodyPart/Target endpoint
+  // Fetch local exercises from /data/exercises.json
   useEffect(() => {
     let isMounted = true;
 
-    fetch(`/api/exercise-image?category=${encodeURIComponent(activeCategory)}`)
+    fetch("/data/exercises.json")
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: any[]) => {
         if (!isMounted) return;
         if (Array.isArray(data) && data.length > 0) {
-          setLiveItems(data.slice(0, 7));
+          const filtered = data.filter((ex) => {
+            const bp = (ex.bodyParts || []).map((s: string) => s.toLowerCase());
+            const tm = (ex.targetMuscles || []).map((s: string) => s.toLowerCase());
+            const sm = (ex.secondaryMuscles || []).map((s: string) => s.toLowerCase());
+            const cat = activeCategory.toLowerCase();
+
+            if (cat === "chest") return bp.includes("chest") || tm.includes("pectorals");
+            if (cat === "back") return bp.includes("back") || tm.includes("lats") || tm.includes("upper back") || tm.includes("spine");
+            if (cat === "biceps") return tm.includes("biceps") || sm.includes("biceps") || (bp.includes("upper arms") && tm.includes("biceps"));
+            if (cat === "triceps") return tm.includes("triceps") || sm.includes("triceps") || (bp.includes("upper arms") && tm.includes("triceps"));
+            if (cat === "shoulders") return bp.includes("shoulders") || tm.includes("delts");
+            if (cat === "legs") return bp.includes("upper legs") || bp.includes("lower legs") || tm.includes("glutes") || tm.includes("calves") || tm.includes("quadriceps");
+            return false;
+          });
+
+          setLiveItems(filtered.length > 0 ? filtered : data.slice(0, 5));
         } else {
           setLiveItems(exercisesData[activeCategory] || []);
         }
